@@ -128,7 +128,12 @@ class Process:
 
             await self._dedupe()
 
-    async def _run(self):
+    async def run_async(self):
+        """
+        Asynchronously cross-copies remote and local content upon start, then watches local and remote for changes, and
+        reactively syncs them, resolving possible conflicts. Rclone itself has to be installed (see
+        https://rclone.org/install/) and a remote set up first (see https://rclone.org/remote_setup/).
+        """
         await self._cross_copy()
 
         # TODO: Replace with TaskGroup from Python 3.11
@@ -140,9 +145,9 @@ class Process:
 
     def run(self):
         """
-        Cross-copies remote and local content upon start, then watches local and remote for changes, and reactively
-        syncs them, resolving possible conflicts. Rclone itself has to be installed (see https://rclone.org/install/)
-        and a remote set up first (see https://rclone.org/remote_setup/).
+        Synchronously cross-copies remote and local content upon start, then watches local and remote for changes, and
+        reactively syncs them, resolving possible conflicts. Rclone itself has to be installed (see
+        https://rclone.org/install/) and a remote set up first (see https://rclone.org/remote_setup/).
         """
         logging.basicConfig(level=logging.INFO)
-        asyncio.run(self._run())
+        asyncio.run(self.run_async())
